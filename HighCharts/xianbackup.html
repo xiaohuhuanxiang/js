@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Highcharts 柱状图</title>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script src="highcharts.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+
+        $(function () {
+            $(document).ready(function() {
+                Highcharts.setOptions({
+                    global: {
+                        useUTC: false
+                    }
+                });
+
+                var chart;
+                $('#container').highcharts({
+                    chart: {
+                        type: 'spline',
+                        animation: Highcharts.svg, // don't animate in old IE
+                        marginRight: 10,
+                        events: {
+                            load: function() {
+
+                                // set up the updating of the chart each second
+                                var series = this.series[0];
+                                var series2 = this.series[1];
+                                var series3 = this.series[2];
+                                var series4 = this.series[3];
+                                setInterval(function() {
+                                    var x = (new Date()).getTime(), // current time
+                                            y = Math.random();
+                                    series.addPoint([x, y], true, false);
+                                    series2.addPoint([x, y+1], false, false);
+                                    series3.addPoint([x, y+2], false, false);
+                                    series4.addPoint([x, y+3], false, false);
+                                }, 1000);
+
+
+                            }
+                        }
+                    },
+                    title: {
+                        text: 'Live random data'
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        tickPixelInterval: 150
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Value'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            return '<b>'+ this.series.name +'</b><br/>'+
+                                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+                                    Highcharts.numberFormat(this.y, 2);
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: 'Random data',
+                        data: (function() {
+                            // generate an array of random data
+                            var data = [],
+                                    time = (new Date()).getTime(),
+                                    i;
+
+                            for (i = -19; i <= 0; i++) {
+                                data.push({
+                                    x: time + i * 1000,
+                                    y: Math.random()
+                                });
+                            }
+                            return data;
+                        })()
+                    },
+                        {
+                            name: 'Random data2',
+                            data: (function() {
+                                // generate an array of random data
+                                var data = [],
+                                        time = (new Date()).getTime(),
+                                        i;
+
+                                for (i = -19; i <= 0; i++) {
+                                    data.push({
+                                        x: time + i * 1000,
+                                        y: Math.random()+1
+                                    });
+                                }
+                                return data;
+                            })()
+                        },
+                        {
+                            name: 'Random data3',
+                            data: (function() {
+                                // generate an array of random data
+                                var data = [],
+                                        time = (new Date()).getTime(),
+                                        i;
+
+                                for (i = -19; i <= 0; i++) {
+                                    data.push({
+                                        x: time + i * 1000,
+                                        y: Math.random()+1
+                                    });
+                                }
+                                return data;
+                            })()
+                        },
+                        {
+                            name: 'Random data4',
+                            data: (function() {
+                                // generate an array of random data
+                                var data = [],
+                                        time = (new Date()).getTime(),
+                                        i;
+
+                                for (i = -19; i <= 0; i++) {
+                                    data.push({
+                                        x: time + i * 1000,
+                                        y: Math.random()+1
+                                    });
+                                }
+                                return data;
+                            })()
+                        }
+                    ]
+                });
+            });
+
+        });
+
+
+    </script>
+</head>
+<body>
+
+
+<div id="container" style="width: 800px; height: 475px; margin: 0 auto">
+</div>
+
+<button id="target" onclick="getdataAndDraw()">磁盘</button>
+</body>
+</html>

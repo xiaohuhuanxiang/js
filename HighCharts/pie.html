@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pie</title>
+    <!--<script src="https://code.highcharts.com/highcharts.js"></script>-->
+    <!--<script src="https://code.highcharts.com/modules/exporting.js"></script>-->
+    <script type="text/javascript" src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+    <script>
+        $(function () {
+            $('#container').highcharts({                   //图表展示容器，与div的id保持一致
+                chart: {
+                    type: 'column'                         //指定图表的类型，默认是折线图（line）
+                },
+                title: {
+                    text: 'My first Highcharts chart'      //指定图表标题
+                },
+                plotOptions: {
+                    pie: {
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function() {
+                              //  return  this.point.name +':'+ this.percentage + '%';
+                              //Highcharts.numberFormat() 我们就可以控制该数值的精度
+                                return this.point.name+':'+Highcharts.numberFormat(this.percentage,2)+'%';
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    type: 'pie',//通过 chart.type 来指定图表类型，表示如果默认图表类型，即如果 series 中没有指定 type， 那么图表的类型就由 该属性来确定。highcharts 支持的所有图表类型见 plotOptions
+                    name: 'Browser share',
+                    data: [
+                        ['Firefox', 45.60],
+                        ['IE', 26.68],
+                        {
+                            name: 'Chrome',
+                            y: 12.68,
+                            sliced: true,
+                            selected: true
+                        },
+                        ['Safari', 8.65],
+                        ['Opera', 6.62],
+                        ['Others', 0.67]
+                    ]
+                }]
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="container" style="min-width:800px;height:400px;"></div>
+
+</body>
+</html>

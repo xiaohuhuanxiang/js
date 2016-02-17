@@ -1,0 +1,282 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Highcharts 柱状图</title>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script src="highcharts.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var xmlHttp;
+        function GetXmlHttpObject(){
+            if (window.XMLHttpRequest){
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp=new XMLHttpRequest();
+            }else{// code for IE6, IE5
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            return xmlhttp;
+        }
+
+        var Xcategories=[];
+        var Yvalue=[];
+        function getdataAndDraw()
+        {
+            var url="http://localhost:8080/tools/draw/drawdata.do";
+
+            xmlHttp=GetXmlHttpObject();
+            xmlHttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+                    var d= xmlHttp.responseText;
+                    //alert("d"+d);
+                    // var json =JSON.parse(d);
+                    // var json =d;
+                    //alert("d"+json);
+                    //  document.getElementById("infodata").value= parserinfoData(json);
+                    var dataObj=eval("("+d+")");//转换为json对象
+                    //alert(dataObj["/boot"]);//0.08
+                    //alert(dataObj["/"]);//0.08
+                    //alert(dataObj["/home"]);//0.08
+                    //alert(dataObj["/dev/shm"]);//0.08
+                    //var tmp=["aa","bb"];
+//var a = [];// 创建数组
+//a.push(1);
+//a.push(1);// 添加到最后
+                    // alert(a);
+
+                    Xcategories.push("/boot");Yvalue.push(dataObj["/boot"]);
+                    Xcategories.push("/home");Yvalue.push(dataObj["/home"]);
+                    Xcategories.push("/dev/shm");Yvalue.push(dataObj["/dev/shm"]);
+                    Xcategories.push("/");Yvalue.push(dataObj["/"]);
+
+                    draw(Xcategories,Yvalue);
+                    // location.href="http://puser.funshion.com/user/getuserinfo?app_code="+document.getElementById("app_code").value+"&user_id="+user_id+"&token="+token;
+                }
+            }
+
+            xmlHttp.open("GET",url,true);
+            xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+//xmlHttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+            xmlHttp.send();
+        }
+        function getdataOnly()
+        {
+            var url="http://localhost:8080/tools/draw/drawdata.do";
+
+            xmlHttp=GetXmlHttpObject();
+            xmlHttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+                    var d= xmlHttp.responseText;
+                    //alert("d"+d);
+                    // var json =JSON.parse(d);
+                    // var json =d;
+                    //alert("d"+json);
+                    //  document.getElementById("infodata").value= parserinfoData(json);
+                    var dataObj=eval("("+d+")");//转换为json对象
+                    //alert(dataObj["/boot"]);//0.08
+                    //alert(dataObj["/"]);//0.08
+                    //alert(dataObj["/home"]);//0.08
+                    //alert(dataObj["/dev/shm"]);//0.08
+                    //var tmp=["aa","bb"];
+//var a = [];// 创建数组
+//a.push(1);
+//a.push(1);// 添加到最后
+                    // alert(a);
+
+                    Xcategories.push("/boot");Yvalue.push(dataObj["/boot"]);
+                    Xcategories.push("/home");Yvalue.push(dataObj["/home"]);
+                    Xcategories.push("/dev/shm");Yvalue.push(dataObj["/dev/shm"]);
+                    Xcategories.push("/");Yvalue.push(dataObj["/"]);
+
+                   // draw(Xcategories,Yvalue);
+                    // location.href="http://puser.funshion.com/user/getuserinfo?app_code="+document.getElementById("app_code").value+"&user_id="+user_id+"&token="+token;
+                }
+            }
+
+            xmlHttp.open("GET",url,true);
+            xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+//xmlHttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+            xmlHttp.send();
+        }
+
+        $(document).ready(function(){
+//do something
+            getdataAndDraw();
+        });
+
+
+        function   draw(Xcategories,Yvalue){
+                Highcharts.setOptions({
+                    global: {
+                        useUTC: false
+                    }
+                });
+
+                var chart;
+
+                var flag=false;//flag=false时，曲线左边不消除，右边增长 ；flag=true时，曲线左边消除，右边增长
+                var i=0;
+                $('#container').highcharts({
+                    chart: {
+                        type: 'spline',
+                        animation: Highcharts.svg, // don't animate in old IE
+                        marginRight: 10,
+                        events: {
+                            load: function() {
+
+                                // set up the updating of the chart each second
+                                var series1 = this.series[0];
+                                var series2 = this.series[1];
+                                var series3 = this.series[2];
+                                var series4 = this.series[3];
+                                setInterval(function() {
+
+                                    var url="http://localhost:8080/tools/draw/drawdata.do";
+
+                                    xmlHttp=GetXmlHttpObject();
+                                    xmlHttp.onreadystatechange=function()
+                                    {
+                                        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                                        {
+                                            var d= xmlHttp.responseText;
+
+                                            var dataObj=eval("("+d+")");//转换为json对象
+
+
+                                            var x = (new Date()).getTime(); // current time
+                                            //y = Math.random();
+                                                if(i<=20){
+                                                    ++i;
+                                                } else{//避免曲线越来越拥挤
+                                                    flag=true;// flag=true时，曲线左边消除，右边增长
+                                                }
+                                            series1.addPoint([x, dataObj["/boot"]], true, flag);
+                                            series2.addPoint([x, dataObj["/home"]], false, flag);
+                                            series3.addPoint([x, dataObj["/dev/shm"]], false, flag);
+                                            series4.addPoint([x, dataObj["/"]], false, flag);
+
+                                        }
+                                    }
+
+                                    xmlHttp.open("GET",url,true);
+                                    xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                                    xmlHttp.send();
+                                }, 3000);
+
+
+                            }
+                        }
+                    },
+                    title: {
+                        text: '磁盘占用率'
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        tickPixelInterval: 150
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Value'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            return '<b>'+ this.series.name +'</b><br/>'+
+                                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+                                    Highcharts.numberFormat(this.y, 2);
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    series: [{
+                        name:Xcategories[0],
+                        data: (function() {
+                            // generate an array of random data
+                            var data = [],
+                                    time = (new Date()).getTime();
+
+                                data.push({
+                                    x: time,
+                                    y:Yvalue[0]
+                                });
+
+                            return data;
+                        })()
+                    },
+                        {
+                            name: Xcategories[1],
+                            data: (function() {
+                                // generate an array of random data
+                                var data = [],
+                                        time = (new Date()).getTime();
+
+
+                                    data.push({
+                                        x: time ,
+                                        y: Yvalue[1]
+                                    });
+
+                                return data;
+                            })()
+                        },
+                        {
+                            //name: Xcategories[2],
+                            name: Xcategories[2],
+                            data: (function() {
+                                // generate an array of random data
+                                var data = [],
+                                        time = (new Date()).getTime();
+
+
+                                    data.push({
+                                        x: time ,
+                                        y: Yvalue[2]
+                                    });
+
+                                return data;
+                            })()
+                        },
+                        {
+                            name: Xcategories[3],
+                            data: (function() {
+                                // generate an array of random data
+                                var data = [],
+                                        time = (new Date()).getTime();
+                                    data.push({
+                                        x: time ,
+                                        y: Yvalue[3]
+                                    });
+
+                                return data;
+                            })()
+                        }
+                    ]
+                });
+
+
+        };
+
+
+    </script>
+</head>
+<body>
+
+
+<div id="container" style="width: 800px; height: 475px; margin: 0 auto">
+</div>
+
+<button id="target" onclick="getdataAndDraw()">磁盘</button>
+</body>
+</html>
